@@ -4,7 +4,7 @@ function divElementEnostavniTekst(sporocilo) {
     sporocilo = sporocilo.replace(/\</g, '&lt;').replace(/\>/g, '&gt;').replace('&lt;img', '<img').replace('png\' /&gt;', 'png\' />');
     return $('<div style="font-weight: bold"></div>').html(sporocilo);
   } else {
-    return $('<div style="font-weight: bold;"></div>').text(sporocilo);
+    return $('<div style="font-weight: bold;"></div>').html(sporocilo);
   }
 }
 
@@ -15,6 +15,7 @@ function divElementHtmlTekst(sporocilo) {
 function procesirajVnosUporabnika(klepetApp, socket) {
   var sporocilo = $('#poslji-sporocilo').val();
   sporocilo = dodajSmeske(sporocilo);
+  sporocilo = checkImage(sporocilo);
   var sistemskoSporocilo;
 
   if (sporocilo.charAt(0) == '/') {
@@ -121,6 +122,29 @@ $(document).ready(function() {
   
   
 });
+
+function checkImage(vhodnoBesedilo) {
+  var el="";
+  vhodnoBesedilo = vhodnoBesedilo.split(" ");
+  for (var i in vhodnoBesedilo) {
+    if (vhodnoBesedilo[i].length> 10)
+      {   
+      var tmp = vhodnoBesedilo[i].substring(0,7);
+      var tmp1 = vhodnoBesedilo[i].substring(0,8);
+      if (tmp == "http://"|| tmp1 == "https://")
+      {
+        
+        var tmp2 = vhodnoBesedilo[i].substring(vhodnoBesedilo[i].length-4,vhodnoBesedilo[i].length);
+        
+        if (tmp2 == ".jpg" || tmp2 == ".png" || tmp2 == ".gif") {
+          
+            el += "<img class='slika' src='"+vhodnoBesedilo[i]+"'/>";
+          }
+      }
+    }
+  }
+  return vhodnoBesedilo.join(" ") +el;
+}
 
 function dodajSmeske(vhodnoBesedilo) {
   var preslikovalnaTabela = {
