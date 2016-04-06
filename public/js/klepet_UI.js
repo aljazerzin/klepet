@@ -1,9 +1,14 @@
 function divElementEnostavniTekst(sporocilo) {
   var jeSmesko = sporocilo.indexOf('http://sandbox.lavbic.net/teaching/OIS/gradivo/') > -1;
+  var jeVideo = sporocilo.indexOf('https://www.youtube.com/watch?v=') > -1;
   if (jeSmesko) {
     sporocilo = sporocilo.replace(/\</g, '&lt;').replace(/\>/g, '&gt;').replace('&lt;img', '<img').replace('png\' /&gt;', 'png\' />');
     return $('<div style="font-weight: bold"></div>').html(sporocilo);
-  } else {
+  }
+  if (jeVideo)
+  {
+    return $('<div style="font-weight: bold;"></div>').html(sporocilo);
+  }else {
     return $('<div style="font-weight: bold;"></div>').html(sporocilo);
   }
 }
@@ -15,7 +20,11 @@ function divElementHtmlTekst(sporocilo) {
 function procesirajVnosUporabnika(klepetApp, socket) {
   var sporocilo = $('#poslji-sporocilo').val();
   sporocilo = dodajSmeske(sporocilo);
+
   sporocilo = checkImage(sporocilo);
+
+  sporocilo = checkVideo(sporocilo);
+
   var sistemskoSporocilo;
 
   if (sporocilo.charAt(0) == '/') {
@@ -123,6 +132,7 @@ $(document).ready(function() {
   
 });
 
+
 function checkImage(vhodnoBesedilo) {
   var el="";
   vhodnoBesedilo = vhodnoBesedilo.split(" ");
@@ -140,6 +150,25 @@ function checkImage(vhodnoBesedilo) {
           
             el += "<img class='slika' src='"+vhodnoBesedilo[i]+"'/>";
           }
+      }
+    }
+  }
+  return vhodnoBesedilo.join(" ") +el;
+}
+
+function checkVideo(vhodnoBesedilo) {
+  var el="";
+  vhodnoBesedilo = vhodnoBesedilo.split(" ");
+  var delUrl = "https://www.youtube.com/watch?v="
+  for (var i in vhodnoBesedilo) {
+    if (vhodnoBesedilo[i].length>delUrl.length)
+      {   
+      var tmp = vhodnoBesedilo[i].substring(0,delUrl.length);
+     
+      if (tmp == delUrl)
+      {
+        var tmp2 = vhodnoBesedilo[i].substring(delUrl.length,vhodnoBesedilo[i].length);
+         el += '<iframe class="video" src="https://www.youtube.com/embed/'+tmp2+'" allowfullscreen></iframe>'
       }
     }
   }
