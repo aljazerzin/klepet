@@ -93,7 +93,13 @@ $(document).ready(function() {
       $('#poslji-sporocilo').focus();
     });
   });
-
+  socket.on('dregljaj', function (dregljaj) {
+    $("#vsebina").jrumble();
+    $("#vsebina").trigger('startRumble');
+    setTimeout(function (argument) {
+      $("#vsebina").trigger('stopRumble');
+    }, 1500);
+  });
   socket.on('uporabniki', function(uporabniki) {
     $('#seznam-uporabnikov').empty();
     for (var i=0; i < uporabniki.length; i++) {
